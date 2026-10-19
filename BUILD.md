@@ -81,13 +81,13 @@ To find what the host device needs, run `uname -m` on it. If it reports `mips`, 
   - It has no Wi-Fi and no device-specific logic.
 - `common/linkcodec.c`: the serial framing, shared by the firmware and the daemon.
 
-### Build
+### Build
 
 ```sh
 docker run --rm -v "$PWD":/repo -w /repo/firmware espressif/idf:v5.5.1 idf.py build
 ```
 
-## Test
+## Test
 
 The end-to-end tests ([bleproxyd/tests/e2e](bleproxyd/tests/e2e/README.md)) run the daemon against a simulated ESP and check it with Home Assistant's own ESPHome client library.
 

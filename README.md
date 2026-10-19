@@ -9,6 +9,26 @@ The original environment is a Teltonika 95X series 4G router and a $10 [Seeed XI
 
 ## How it Works
 
+```mermaid
+flowchart LR
+    subgraph remote["⛵ Remote site, e.g. a boat"]
+        victron["🔋 Victron SmartShunt"]
+        ruuvi["🌡️ RuuviTag"]
+        switchbot["🌡️ SwitchBot Meter"]
+        esp["🔌 ESP32 USB stick<br/>Seeed XIAO ESP32-C6<br/>NimBLE scanner"]
+        host["📶 Cellular router (host)<br/>Teltonika RUT95x<br/>bleproxyd"]
+    end
+    subgraph home["🏠 Home network"]
+        ha["Home Assistant<br/>ESPHome + Bluetooth integrations"]
+    end
+
+    victron -. BLE adverts .-> esp
+    ruuvi -. BLE adverts .-> esp
+    switchbot -. BLE adverts .-> esp
+    esp == "USB serial (CDC-ACM)<br/>power in, adverts out" ==> host
+    host <== "ESPHome native API, TCP 6053<br/>over WireGuard / LTE" ==> ha
+```
+
 The *combination* of the ESP32 device and Linux daemon acts as an **ESPHome** device, so can be added to Home Assistant using the standard ESPHome integration and will show up automatically in the Bluetooth integration, along with any configured BLE devices it finds.
 
 The ESP32 device has a Bluetooth stack, and preferably an external antenna connection, and communicates solely over the USB serial connection, from which it also gets its power.
@@ -21,11 +41,6 @@ For security and tiny footprint, it does scan and report all BLE devices found, 
 
 `bleproxyd` is tiny, and has no dependencies on BlueZ, Python or packages on the router. There is no reliance on Wi-Fi, ideal for when the boat or similar is being monitored long term in a minimal power environment.
 
-```
-BLE devices ──► XIAO ESP32-C6 ──USB (CDC-ACM)──► Router bleproxyd ──WireGuard/LTE──► Home Assistant
-                NimBLE scanner                    ESPHome native API :6053          homeassistant.local
-                (firmware/)                       allowlist + rate limit (bleproxyd/)
-```
 
 > [!WARNING]
 > Some countries take a hard line on the freedom that ESP32 devices give to tinkerers, so be careful about importing them, and you may need to domestically source devices.

@@ -15,21 +15,21 @@
 | `ssh` | `tools/flash-remote.sh` | System |
 | `pre-commit` | Git hooks (see [Pre-commit hooks](#pre-commit-hooks)) | mise (in [mise.toml](mise.toml)) |
 
-!!! tip
-    `mise` is the easiest way to install `zig`, Python and `uv`. Run `mise install` to follow the config [mise.toml](mise.toml) pins. Add the others with `mise use python uv` if you want them, then install `esptool` with `uv tool install esptool`.
+> [!TIP]
+> `mise` is the easiest way to install `zig`, Python and `uv`. Run `mise install` to follow the config [mise.toml](mise.toml) pins. Add the others with `mise use python uv` if you want them, then install `esptool` with `uv tool install esptool`.
+>Docker, `ssh` and `git` can't be installed with mise. `make` and `clang` are only available through mise's experimental conda backend, so use the system versions.
 
-    Docker, `ssh` and `git` can't be installed with mise. `make` and `clang` are only available through mise's experimental conda backend, so use the system versions.
+### Getting `make` and a C compiler
 
-!!! tip "Getting `make` and a C compiler"
-    | System | Command |
-    |---|---|
-    | macOS | `xcode-select --install` (Command Line Tools: `make`, Apple clang, `git`) |
-    | Debian, Ubuntu | `sudo apt install build-essential` (`make`, gcc), plus `clang` if you prefer it |
-    | Fedora, RHEL, Rocky, Alma | `sudo dnf install make gcc libasan libubsan`, plus `clang` if you prefer it |
-    | openSUSE | `sudo zypper install make gcc`, plus `clang` if you prefer it |
-    | Arch, Manjaro | `sudo pacman -S base-devel` (`make`, gcc), plus `clang` if you prefer it |
+| System | Command |
+|---|---|
+| macOS | `xcode-select --install` (Command Line Tools: `make`, Apple clang, `git`) |
+| Debian, Ubuntu | `sudo apt install build-essential` (`make`, gcc), plus `clang` if you prefer it |
+| Fedora, RHEL, Rocky, Alma | `sudo dnf install make gcc libasan libubsan`, plus `clang` if you prefer it |
+| openSUSE | `sudo zypper install make gcc`, plus `clang` if you prefer it |
+| Arch, Manjaro | `sudo pacman -S base-devel` (`make`, gcc), plus `clang` if you prefer it |
 
-    gcc and clang both work. The `test` target needs AddressSanitizer and UndefinedBehaviorSanitizer, which the Debian, Arch and macOS packages already include. On Fedora and RHEL they come from the separate `libasan` and `libubsan` packages. To build with clang on Linux, run `make CC=clang`.
+gcc and clang both work. The `test` target needs AddressSanitizer and UndefinedBehaviorSanitizer, which the Debian, Arch and macOS packages already include. On Fedora and RHEL they come from the separate `libasan` and `libubsan` packages. To build with clang on Linux, run `make CC=clang`.
 
 ## Linux
 
@@ -41,7 +41,7 @@
   - Implements just enough of the ESPHome API for a passive proxy, which is all that common BLE devices like Victron, Ruuvi and SwitchBot devices need.
 - `common/linkcodec.c`: the serial framing, shared by the firmware and the daemon.
 
-### Build
+### Build
 
 ```sh
 make -C bleproxyd test e2e mipsle     # unit + end-to-end tests, then bleproxyd/dist/bleproxyd-linux-mipsle

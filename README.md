@@ -4,8 +4,8 @@ A minimal Bluetooth Low Energy (BLE) proxy intended to run on a combination of a
 
 The original environment is a Teltonika 95X series 4G router and a $10 [Seeed XIAO ESP32-C6](https://www.seeedstudio.com/Seeed-Studio-XIAO-ESP32C6-p-5884.html) with an external 2.4 GHz antenna on a boat, with Wireguard VPN extending the home network to the boat. Typical BLE devices are Victron boxes, and thermometers such as RuuviTag and Switchbot.
 
-!!! note
-    This is focused only on passive Bluetooth *Low Energy* usage, so it doesn't do any of the traditional Bluetooth pairing, has no audio support, and doesn't handle active BLE using GATT.
+> [!NOTE]
+>This project is focused only on passive Bluetooth *Low Energy* usage, so it doesn't do any of the traditional Bluetooth pairing, has no audio support, and doesn't handle active BLE using GATT.
 
 ## How it Works
 
@@ -27,9 +27,8 @@ BLE devices ──► XIAO ESP32-C6 ──USB (CDC-ACM)──► Router bleproxy
                 (firmware/)                       allowlist + rate limit (bleproxyd/)
 ```
 
-!!! warning
-    Some countries take a hard line on the freedom that ESP32 devices give to tinkerers,
-    so be careful about importing them, and you may need to domestically source devices.
+> [!WARNING]
+> Some countries take a hard line on the freedom that ESP32 devices give to tinkerers, so be careful about importing them, and you may need to domestically source devices.
 
 ## Build and Test
 
@@ -37,9 +36,8 @@ Find the instructions at [BUILD.md](./BUILD.md)
 
 ## Install on the Host Device
 
-!!! info
-    These instructions assume an Openwrt-based Teltonika RutOS modem/router, however it
-    should work on any Linux based device that has USB ports.
+> [!NOTE]
+>These instructions assume an Openwrt-based Teltonika RutOS modem/router, however it should work on any Linux based device that has USB ports.
 
 
 RutOS 7.x has a read-only root. The writable overlay holds `/usr/local` and `/etc`, with under 1 MB free.
@@ -66,22 +64,22 @@ An alternative service for `systemd` based hosts is available at `bleproxyd/pack
 
 ## Add to Home Assistant
 
-![Add ESPHome](docs/assets/images/hass_add_esphome.png){width=500}
+![Add ESPHome](docs/assets/images/hass_add_esphome.png)
 
 - **Settings** → **Devices & services** → **Add integration** → **ESPHome**.
 - Set the IP address of the host, and port `6053` unless overridden.
 - There is no encryption key.
 - mDNS doesn't cross VPNs, and often not between Wifi and wired, so it won't be auto-discovered.
 
-![Setup ESPHome](docs/assets/images/hass_setup_esphome.png){width=500}
+![Setup ESPHome](docs/assets/images/hass_setup_esphome.png)
 
 Once that's done, integrations like Victron BLE, Ruuvi and SwitchBot integrations discover their devices through it as usual. Some, like Victron, will need an encryption key at this stage (VictronConnect app has the Instant Readout key).
 
-![Discovered Devices](docs/assets/images/hass_discovery.png){width=500}
+![Discovered Devices](docs/assets/images/hass_discovery.png)
 
 HA's Bluetooth page shows it as an active scanner with 0 connection slots. That's expected, currently this is a passive scanner only, and forwards on data that devices continually advertise to all listeners, it doesn't poke about with GATT to actively pull data, as is required for things like Bluetti power stations.
 
-![Home Assistant Bluetooth Page](docs/assets/images/hass_bt_connectivity.png){width=500}
+![Home Assistant Bluetooth Page](docs/assets/images/hass_bt_connectivity.png)
 
 ## Choosing devices
 

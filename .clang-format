@@ -1,4 +1,5 @@
-# Matches the existing code: K&R braces, 4-space indent, 120 columns.
+# Matches the existing code: LLVM base, attached braces, 4-space indent,
+# 120 columns, unindented case labels, no column alignment of macros.
 BasedOnStyle: LLVM
 IndentWidth: 4
 ColumnLimit: 120
@@ -7,11 +8,10 @@ AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
 AllowShortBlocksOnASingleLine: Never
-AllowShortEnumsOnASingleLine: false
-IndentCaseLabels: true
+AllowShortEnumsOnASingleLine: true
+IndentCaseLabels: false
 SpacesBeforeTrailingComments: 2
-AlignTrailingComments: true
-AlignConsecutiveMacros: AcrossComments
+AlignEscapedNewlines: Left
 # ESP-IDF headers can depend on order (FreeRTOS.h before task.h), so sort only
 # within blank-line-separated blocks and never merge them.
 SortIncludes: CaseSensitive

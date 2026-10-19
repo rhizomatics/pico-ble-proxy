@@ -132,37 +132,37 @@ static void set_scanner(struct run_ctx *r, int running) {
 static void run_frame(void *ctx, uint8_t type, const uint8_t *p, size_t n) {
     struct run_ctx *r = ctx;
     switch (type) {
-        case LINK_ADV: {
-            struct advert a;
-            if (advert_parse(p, n, &a) == 0) {
-                hub_ingest(&r->hub, &a, now_ms());
-            }
-            break;
+    case LINK_ADV: {
+        struct advert a;
+        if (advert_parse(p, n, &a) == 0) {
+            hub_ingest(&r->hub, &a, now_ms());
         }
-        case LINK_HELLO:
-            if (n >= 13) {
-                memcpy(r->esp.base_mac, p + 1, 6);
-                memcpy(r->esp.bt_mac, p + 7, 6);
-                size_t fl = n - 13 < sizeof(r->esp.firmware) - 1 ? n - 13 : sizeof(r->esp.firmware) - 1;
-                memcpy(r->esp.firmware, p + 13, fl);
-                r->esp.firmware[fl] = 0;
-                char bt[18];
-                fmt_mac_bytes(r->esp.bt_mac, bt);
-                logmsg("esp: firmware \"%s\" bt %s", r->esp.firmware, bt);
-                r->have_esp = 1;
-                set_scanner(r, 1);
-            }
-            break;
-        case LINK_STATUS:
-            // Every ~10 minutes, so the log shows the link is healthy.
-            if (n >= 16 && le32(p) % 600 < 30) {
-                logmsg("esp: up %us seen %u dropped %u heap %u | hub seen %lu allowed %lu forwarded %lu", le32(p),
-                       le32(p + 4), le32(p + 8), le32(p + 12), r->hub.seen, r->hub.allowed, r->hub.forwarded);
-            }
-            break;
-        case LINK_LOG:
-            logmsg("esp: %.*s", (int)n, (const char *)p);
-            break;
+        break;
+    }
+    case LINK_HELLO:
+        if (n >= 13) {
+            memcpy(r->esp.base_mac, p + 1, 6);
+            memcpy(r->esp.bt_mac, p + 7, 6);
+            size_t fl = n - 13 < sizeof(r->esp.firmware) - 1 ? n - 13 : sizeof(r->esp.firmware) - 1;
+            memcpy(r->esp.firmware, p + 13, fl);
+            r->esp.firmware[fl] = 0;
+            char bt[18];
+            fmt_mac_bytes(r->esp.bt_mac, bt);
+            logmsg("esp: firmware \"%s\" bt %s", r->esp.firmware, bt);
+            r->have_esp = 1;
+            set_scanner(r, 1);
+        }
+        break;
+    case LINK_STATUS:
+        // Every ~10 minutes, so the log shows the link is healthy.
+        if (n >= 16 && le32(p) % 600 < 30) {
+            logmsg("esp: up %us seen %u dropped %u heap %u | hub seen %lu allowed %lu forwarded %lu", le32(p),
+                   le32(p + 4), le32(p + 8), le32(p + 12), r->hub.seen, r->hub.allowed, r->hub.forwarded);
+        }
+        break;
+    case LINK_LOG:
+        logmsg("esp: %.*s", (int)n, (const char *)p);
+        break;
     }
 }
 
@@ -263,20 +263,17 @@ struct discover_ctx {
     int n;
 };
 
+// clang-format off
 static const struct {
     uint16_t id;
     const char *name;
-} company_names[] =
-    {
-        {0x02E1, "Victron"},   {0x0499, "Ruuvi"},   {0x0969, "SwitchBot"}, {0x004C, "Apple"},
-        {0x0006, "Microsoft"}, {0x0075, "Samsung"}, {0x00E0, "Google"},
-    },
-  service_names[] = {
-      {0xFD3D, "SwitchBot"},
-      {0xFCD2, "BTHome"},
-      {0xFE95, "Xiaomi"},
-      {0xFEAA, "Eddystone"},
-  };
+} company_names[] = {
+    {0x02E1, "Victron"}, {0x0499, "Ruuvi"}, {0x0969, "SwitchBot"}, {0x004C, "Apple"},
+    {0x0006, "Microsoft"}, {0x0075, "Samsung"}, {0x00E0, "Google"},
+}, service_names[] = {
+    {0xFD3D, "SwitchBot"}, {0xFCD2, "BTHome"}, {0xFE95, "Xiaomi"}, {0xFEAA, "Eddystone"},
+};
+// clang-format on
 
 static void add_hint(struct seen_device *s, const char *h) {
     if (strstr(s->hints, h)) {

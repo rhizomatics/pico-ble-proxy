@@ -66,22 +66,22 @@ An alternative service for `systemd` based hosts is available at `bleproxyd/pack
 
 ## Add to Home Assistant
 
-![Add ESPHome](docs/assets/images/hass_add_esphome.png)
+![Add ESPHome](docs/assets/images/hass_add_esphome.png){width=500}
 
 - **Settings** → **Devices & services** → **Add integration** → **ESPHome**.
 - Set the IP address of the host, and port `6053` unless overridden.
 - There is no encryption key.
 - mDNS doesn't cross VPNs, and often not between Wifi and wired, so it won't be auto-discovered.
 
-![Setup ESPHome](docs/assets/images/hass_setup_esphome.png)
+![Setup ESPHome](docs/assets/images/hass_setup_esphome.png){width=500}
 
 Once that's done, integrations like Victron BLE, Ruuvi and SwitchBot integrations discover their devices through it as usual. Some, like Victron, will need an encryption key at this stage (VictronConnect app has the Instant Readout key).
 
-![Discovered Devices](docs/assets/images/hass_discovery.png)
+![Discovered Devices](docs/assets/images/hass_discovery.png){width=500}
 
 HA's Bluetooth page shows it as an active scanner with 0 connection slots. That's expected, currently this is a passive scanner only, and forwards on data that devices continually advertise to all listeners, it doesn't poke about with GATT to actively pull data, as is required for things like Bluetti power stations.
 
-![Home Assistant Bluetooth Page](docs/assets/images/hass_bt_connectivity.png)
+![Home Assistant Bluetooth Page](docs/assets/images/hass_bt_connectivity.png){width=500}
 
 ## Choosing devices
 

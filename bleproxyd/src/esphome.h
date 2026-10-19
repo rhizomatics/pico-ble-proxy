@@ -11,8 +11,8 @@
 #include "hub.h"
 
 #define API_MAX_CLIENTS 4
-#define API_IN_MAX      4096
-#define API_OUT_MAX     32768
+#define API_IN_MAX 4096
+#define API_OUT_MAX 32768
 
 // What the ESP told us in its HELLO frame.
 struct esp_info {

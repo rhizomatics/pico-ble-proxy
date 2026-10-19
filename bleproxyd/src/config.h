@@ -4,7 +4,7 @@
 
 #include "util.h"
 
-#define MAX_DEVICES  64
+#define MAX_DEVICES 64
 #define MAX_PREFIXES 16
 
 struct device {

@@ -9,7 +9,7 @@
 #define ADV_DATA_MAX 31
 // Distinct (address, packet kind) pairs tracked. When full, the least
 // recently heard is evicted.
-#define HUB_MAX      256
+#define HUB_MAX 256
 
 struct advert {
     uint64_t addr;

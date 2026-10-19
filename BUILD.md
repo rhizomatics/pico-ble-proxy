@@ -100,7 +100,7 @@ pre-commit install --hook-type pre-commit --hook-type pre-push
 pre-commit run --all-files            # check the whole tree
 ```
 
-- Auto-fixes (re-stage and commit again): trailing whitespace, missing final newlines, CRLF line endings, Python import order and formatting (ruff, settings in [ruff.toml](ruff.toml)).
+- Auto-fixes (re-stage and commit again): trailing whitespace, missing final newlines, CRLF line endings, Python import order and formatting (ruff, settings in [ruff.toml](ruff.toml)), C formatting (clang-format, settings in [.clang-format](.clang-format)).
 - Checks: YAML/TOML/JSON syntax, merge conflict markers, large files and firmware images (`.bin`, `.uf2`, `.elf`), private keys, executable bits, shellcheck, ruff lint, codespell.
 - When C sources or the Makefile change: `make test` and the `mipsle`, `arm64` and `armv7` cross builds.
 - Before push only: `make e2e`, which is slower and builds a venv on first run.

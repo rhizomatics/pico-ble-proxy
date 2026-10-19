@@ -34,14 +34,14 @@ enum {
 };
 
 // Bluetooth proxy feature flags (bluetooth_proxy.h).
-#define FEATURE_PASSIVE_SCAN       (1u << 0)
+#define FEATURE_PASSIVE_SCAN (1u << 0)
 #define FEATURE_RAW_ADVERTISEMENTS (1u << 5)
-#define FEATURE_STATE_AND_MODE     (1u << 6)
-#define FEATURE_FLAGS              (FEATURE_PASSIVE_SCAN | FEATURE_RAW_ADVERTISEMENTS | FEATURE_STATE_AND_MODE)
+#define FEATURE_STATE_AND_MODE (1u << 6)
+#define FEATURE_FLAGS (FEATURE_PASSIVE_SCAN | FEATURE_RAW_ADVERTISEMENTS | FEATURE_STATE_AND_MODE)
 
 #define SCANNER_STATE_RUNNING 2
 #define SCANNER_STATE_STOPPED 5
-#define SCANNER_MODE_ACTIVE   1
+#define SCANNER_MODE_ACTIVE 1
 
 // API 1.14 is the last version where Home Assistant reads the proxy feature
 // flags from DeviceInfoResponse instead of asking for DeviceCapabilities,
@@ -55,8 +55,8 @@ enum {
 // about the wire protocol.
 #define ESPHOME_VERSION_COMPAT "2026.9.0"
 
-#define BATCH_SIZE              16
-#define KEEPALIVE_MS            60000
+#define BATCH_SIZE 16
+#define KEEPALIVE_MS 60000
 #define KEEPALIVE_DISCONNECT_MS (KEEPALIVE_MS * 5 / 2)
 
 // --- protobuf encoding -----------------------------------------------------
@@ -295,47 +295,47 @@ static void handle_hello(struct api_server *s, struct api_client *c, const uint8
 
 static void handle_message(struct api_server *s, struct api_client *c, uint64_t type, const uint8_t *p, size_t n) {
     switch (type) {
-        case MSG_HELLO_REQUEST:
-            handle_hello(s, c, p, n);
-            break;
-        case MSG_AUTHENTICATION_REQUEST:
-            client_send(c, MSG_AUTHENTICATION_RESPONSE, NULL, 0);  // invalid_password = false
-            break;
-        case MSG_DISCONNECT_REQUEST:
-            client_send(c, MSG_DISCONNECT_RESPONSE, NULL, 0);
-            c->close_after_flush = 1;
-            client_flush(c);
-            break;
-        case MSG_PING_REQUEST:
-            client_send(c, MSG_PING_RESPONSE, NULL, 0);
-            break;
-        case MSG_DEVICE_INFO_REQUEST:
-            send_device_info(s, c);
-            break;
-        case MSG_DEVICE_CAPABILITIES_REQUEST:
-            send_device_capabilities(s, c);
-            break;
-        case MSG_LIST_ENTITIES_REQUEST:
-            client_send(c, MSG_LIST_ENTITIES_DONE_RESPONSE, NULL, 0);
-            break;
-        case MSG_SUBSCRIBE_BLE_ADVERTISEMENTS: {
-            c->subscribed = 1;
-            logmsg("api: %s subscribed to advertisements", c->peer);
-            send_scanner_state(s, c);
-            const struct advert *snap[HUB_MAX];
-            send_adverts(c, snap, hub_snapshot(s->hub, snap, HUB_MAX));
-            break;
-        }
-        case MSG_UNSUBSCRIBE_BLE_ADVERTISEMENTS:
-            c->subscribed = 0;
-            break;
-        case MSG_BLUETOOTH_SCANNER_SET_MODE:
-            send_scanner_state(s, c);  // mode is fixed in firmware; report it back unchanged
-            break;
-        default:
-            // Subscribe-states, home-assistant-states, logs, ping responses...:
-            // nothing to do, and ESPHome devices ignore unknown messages too.
-            break;
+    case MSG_HELLO_REQUEST:
+        handle_hello(s, c, p, n);
+        break;
+    case MSG_AUTHENTICATION_REQUEST:
+        client_send(c, MSG_AUTHENTICATION_RESPONSE, NULL, 0);  // invalid_password = false
+        break;
+    case MSG_DISCONNECT_REQUEST:
+        client_send(c, MSG_DISCONNECT_RESPONSE, NULL, 0);
+        c->close_after_flush = 1;
+        client_flush(c);
+        break;
+    case MSG_PING_REQUEST:
+        client_send(c, MSG_PING_RESPONSE, NULL, 0);
+        break;
+    case MSG_DEVICE_INFO_REQUEST:
+        send_device_info(s, c);
+        break;
+    case MSG_DEVICE_CAPABILITIES_REQUEST:
+        send_device_capabilities(s, c);
+        break;
+    case MSG_LIST_ENTITIES_REQUEST:
+        client_send(c, MSG_LIST_ENTITIES_DONE_RESPONSE, NULL, 0);
+        break;
+    case MSG_SUBSCRIBE_BLE_ADVERTISEMENTS: {
+        c->subscribed = 1;
+        logmsg("api: %s subscribed to advertisements", c->peer);
+        send_scanner_state(s, c);
+        const struct advert *snap[HUB_MAX];
+        send_adverts(c, snap, hub_snapshot(s->hub, snap, HUB_MAX));
+        break;
+    }
+    case MSG_UNSUBSCRIBE_BLE_ADVERTISEMENTS:
+        c->subscribed = 0;
+        break;
+    case MSG_BLUETOOTH_SCANNER_SET_MODE:
+        send_scanner_state(s, c);  // mode is fixed in firmware; report it back unchanged
+        break;
+    default:
+        // Subscribe-states, home-assistant-states, logs, ping responses...:
+        // nothing to do, and ESPHome devices ignore unknown messages too.
+        break;
     }
 }
 

@@ -1,0 +1,74 @@
+# Run `pre-commit install` once, then hooks run on every commit.
+# `pre-commit run --all-files` checks the whole tree.
+exclude: ^(backups|firmware/build|firmware/managed_components|bleproxyd/(build|dist))/
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: [--maxkb=512]
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: detect-private-key
+      - id: forbid-new-submodules
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1-1
+    hooks:
+      - id: shellcheck
+        # procd init scripts run under /etc/rc.common, which shellcheck can't follow.
+        files: (\.sh|\.init)$
+        args: [--shell=sh, --exclude=SC2034]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+      - id: codespell
+        # WONT is the Telnet option verb (RFC 854) used by RFC 2217.
+        args: [--ignore-words-list=wont]
+
+  - repo: local
+    hooks:
+      - id: forbid-binaries
+        name: forbid firmware images and dumps
+        language: fail
+        entry: binary images belong in releases, not git
+        files: \.(bin|uf2|elf)$
+      - id: unit-tests
+        name: bleproxyd unit tests
+        language: system
+        entry: make -C bleproxyd test
+        files: ^(bleproxyd/(src|tests)/.*\.[ch]|common/.*\.[ch]|bleproxyd/Makefile)$
+        pass_filenames: false
+      - id: cross-build
+        name: bleproxyd cross builds (mipsle, arm64, armv7)
+        language: system
+        entry: make -C bleproxyd mipsle arm64 armv7
+        files: ^(bleproxyd/src/.*\.[ch]|common/.*\.[ch]|bleproxyd/Makefile)$
+        pass_filenames: false
+      # Slower: builds a venv on first run, so only before pushing.
+      - id: e2e-tests
+        name: bleproxyd end-to-end tests
+        language: system
+        entry: make -C bleproxyd e2e
+        files: ^(bleproxyd/(src|tests)/|common/|bleproxyd/Makefile)
+        pass_filenames: false
+        stages: [pre-push]

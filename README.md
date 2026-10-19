@@ -57,7 +57,7 @@ An alternative service for `systemd` based hosts is available at `bleproxyd/pack
 
 ### Notes
 - Routers may block clients that opens several SSH connections quickly, so batch commands into one `ssh` where possible.
-- With the ESP plugged in, `ls /dev/ttyACM*` should show it. 
+- With the ESP plugged in, `ls /dev/ttyACM*` should show it.
   - The host device needs the `cdc_acm` driver.
   - If nothing appears, the cable is probably power-only (often USB-C or USB-A -> USB-C cables are designed for charging purposes and not data. Often the data and power ones are advertised as 'Carplay' compatible)
 - Firewall: allow TCP port 6053 from the host IP, and TCP port 4000 from home for reflashing, on whichever zone the WireGuard traffic arrives in.
@@ -68,10 +68,10 @@ An alternative service for `systemd` based hosts is available at `bleproxyd/pack
 
 ![Add ESPHome](docs/assets/images/hass_add_esphome.png)
 
-- **Settings** → **Devices & services** → **Add integration** → **ESPHome**. 
-- Set the IP address of the host, and port `6053` unless overridden. 
-- There is no encryption key. 
-- mDNS doesn't cross VPNs, and often not between Wifi and wired, so it won't be auto-discovered. 
+- **Settings** → **Devices & services** → **Add integration** → **ESPHome**.
+- Set the IP address of the host, and port `6053` unless overridden.
+- There is no encryption key.
+- mDNS doesn't cross VPNs, and often not between Wifi and wired, so it won't be auto-discovered.
 
 ![Setup ESPHome](docs/assets/images/hass_setup_esphome.png)
 
@@ -116,7 +116,7 @@ To restore a backup, run `esptool write-flash 0 backups/<file>.bin`.
 
 ## Alternatives
 
-- [SMLight](https://smlight.tech) - SLZB-OS has BLE support compatible with Home Assistant's BLE proxy expectations, and has a USB->Ethernet pass-thru mode.
+- [SMLight](https://smlight.tech) - SLZB-OS has BLE support compatible with Home Assistant's BLE proxy expectations, and has a USB->Ethernet pass-through mode.
 - [Shelly](https://www.shelly.com/products/shelly-blu-gateway) - USB-A dongle, requires WiFi and only advertised as supporting Shelly BLE devices.
 
 ## References

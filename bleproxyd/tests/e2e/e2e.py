@@ -20,8 +20,8 @@ import tempfile
 import threading
 import time
 
-from aioesphomeapi import APIClient
 import serial
+from aioesphomeapi import APIClient
 
 BINARY = None
 FAILURES = []
@@ -41,6 +41,7 @@ def check(cond, what):
 
 
 # --- simulated ESP32 ------------------------------------------------------
+
 
 def crc16(b):
     c = 0xFFFF
@@ -124,8 +125,12 @@ class FakeESP:
             conn.sendall(b"ESP-ROM:esp32c6-20220919\r\nboot noise\r\n" + HELLO)
             while True:
                 seq += 1
-                ruuvi = bytes.fromhex("020106") + bytes([0x1B, 0xFF, 0x99, 0x04, 0x05]) + bytes(20) + struct.pack(">H", seq)
-                victron = bytes.fromhex("020106") + bytes([0x0B, 0xFF, 0xE1, 0x02, 0x10, 0x00, seq & 0xFF, 0xA0, 1, 2, 3, 4])
+                ruuvi = (
+                    bytes.fromhex("020106") + bytes([0x1B, 0xFF, 0x99, 0x04, 0x05]) + bytes(20) + struct.pack(">H", seq)
+                )
+                victron = bytes.fromhex("020106") + bytes(
+                    [0x0B, 0xFF, 0xE1, 0x02, 0x10, 0x00, seq & 0xFF, 0xA0, 1, 2, 3, 4]
+                )
                 conn.sendall(
                     adv(RUUVI, 1, -71, ruuvi)
                     + adv(RUUVI, 1, -71, b"", scan=1)  # empty scan response: must be dropped
@@ -143,6 +148,7 @@ class FakeESP:
 
 
 # --- helpers ----------------------------------------------------------------
+
 
 def free_port():
     s = socket.socket()
@@ -187,11 +193,14 @@ def mac_int(m):
 
 # --- tests --------------------------------------------------------------------
 
+
 async def test_home_assistant_flow(long_run):
     print("Home Assistant client flow")
     esp = FakeESP()
     api_port = free_port()
-    d = Daemon(["run"], f"""
+    d = Daemon(
+        ["run"],
+        f"""
 serial tcp://127.0.0.1:{esp.port}
 listen 127.0.0.1:{api_port}
 allow_from 127.0.0.1
@@ -203,7 +212,8 @@ keepalive 3s
 device {VICTRON} Victron
 device {RUUVI} Ruuvi
 device {SWITCHBOT} SwitchBot
-""")
+""",
+    )
     try:
         check(d.wait_log("ESPHome API listening"), "API starts once the ESP says hello")
         cli = APIClient("127.0.0.1", api_port, password=None, client_info="e2e")
@@ -211,7 +221,10 @@ device {SWITCHBOT} SwitchBot
         check((cli.api_version.major, cli.api_version.minor) == (1, 14), f"API version 1.14 (got {cli.api_version})")
         info = await cli.device_info()
         check(info.name == "test-proxy" and info.friendly_name == "Test Proxy", "device name")
-        check(info.mac_address == ":".join(ESP_BASE_MAC[i:i + 2] for i in range(0, 12, 2)), "mac_address is the ESP base MAC")
+        check(
+            info.mac_address == ":".join(ESP_BASE_MAC[i : i + 2] for i in range(0, 12, 2)),
+            "mac_address is the ESP base MAC",
+        )
         check(info.bluetooth_mac_address.replace(":", "") == ESP_BT_MAC, "bluetooth_mac_address is the ESP BT MAC")
         flags = info.bluetooth_proxy_feature_flags_compat(cli.api_version)
         check(flags == 97, f"proxy flags passive+raw+state (got {flags})")
@@ -223,7 +236,10 @@ device {SWITCHBOT} SwitchBot
         got = []
         t0 = time.monotonic()
         cli.subscribe_bluetooth_le_raw_advertisements(
-            lambda m: got.extend((time.monotonic() - t0, a.address, a.address_type, a.rssi, bytes(a.data)) for a in m.advertisements))
+            lambda m: got.extend(
+                (time.monotonic() - t0, a.address, a.address_type, a.rssi, bytes(a.data)) for a in m.advertisements
+            )
+        )
         await asyncio.sleep(4.5)
 
         addrs = {g[1] for g in got}
@@ -262,12 +278,15 @@ async def test_allow_from():
     print("allow_from")
     esp = FakeESP()
     api_port = free_port()
-    d = Daemon(["run"], f"""
+    d = Daemon(
+        ["run"],
+        f"""
 serial tcp://127.0.0.1:{esp.port}
 listen 127.0.0.1:{api_port}
 allow_from 10.0.0.0/8
 device {RUUVI} Ruuvi
-""")
+""",
+    )
     try:
         d.wait_log("ESPHome API listening")
         cli = APIClient("127.0.0.1", api_port, password=None)
@@ -296,11 +315,14 @@ def test_flash_bridge():
 
     threading.Thread(target=serve_echo, daemon=True).start()
     port = free_port()
-    d = Daemon(["flash-bridge", "-t", "20"], f"""
+    d = Daemon(
+        ["flash-bridge", "-t", "20"],
+        f"""
 serial tcp://127.0.0.1:{echo_port}
 maintenance_listen 127.0.0.1:{port}
 maintenance_allow_from 127.0.0.1
-""")
+""",
+    )
     try:
         check(d.wait_log("flash-bridge: listening"), "bridge listening")
         p = serial.serial_for_url(f"rfc2217://127.0.0.1:{port}", baudrate=460800, timeout=3)

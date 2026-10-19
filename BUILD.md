@@ -10,9 +10,10 @@
 | `git` | Version string in the binary (falls back to `dev`) | System |
 | Python 3 with `venv` | `e2e` (`aioesphomeapi`, `pyserial` are installed into `tests/e2e/.venv` automatically) | mise (`python`) or system |
 | Docker | Building the ESP32 firmware with ESP-IDF | **Not via mise**: Docker Desktop, OrbStack, or the distro package |
-| `uv` | Installing `esptool` | mise (`uv`) or the [uv installer](https://docs.astral.sh/uv/) |
+| `uv` | Installing `esptool` | mise (`uv`) or the [uv installer](https://docs.astral.sh/uv/), or install packages using `pip` |
 | `esptool` v5+ | Flashing the ESP32 (`tools/flash-remote.sh`) | `uv tool install esptool` |
 | `ssh` | `tools/flash-remote.sh` | System |
+| `pre-commit` | Git hooks (see [Pre-commit hooks](#pre-commit-hooks)) | mise (in [mise.toml](mise.toml)) |
 
 !!! tip
     `mise` is the easiest way to install `zig`, Python and `uv`. Run `mise install` to follow the config [mise.toml](mise.toml) pins. Add the others with `mise use python uv` if you want them, then install `esptool` with `uv tool install esptool`.
@@ -34,9 +35,9 @@
 
 ### Source
 
-- `bleproxyd/`: C daemon for the router. 
-  - A static musl binary of about 170 KB that uses about 350 KB of RAM on the host device. 
-  - It's also built for `arm64`. 
+- `bleproxyd/`: C daemon for the router.
+  - A static musl binary of about 170 KB that uses about 350 KB of RAM on the host device.
+  - It's also built for `arm64`.
   - Implements just enough of the ESPHome API for a passive proxy, which is all that common BLE devices like Victron, Ruuvi and SwitchBot devices need.
 - `common/linkcodec.c`: the serial framing, shared by the firmware and the daemon.
 
@@ -75,8 +76,8 @@ To find what the host device needs, run `uname -m` on it. If it reports `mips`, 
 
 ### Source
 
-- `firmware/`: ESP-IDF app. 
-  - Scans continuously and sends every advert over the framed serial link ([docs/serial-protocol.md](docs/serial-protocol.md)). 
+- `firmware/`: ESP-IDF app.
+  - Scans continuously and sends every advert over the framed serial link ([docs/serial-protocol.md](docs/serial-protocol.md)).
   - It has no Wi-Fi and no device-specific logic.
 - `common/linkcodec.c`: the serial framing, shared by the firmware and the daemon.
 
@@ -89,6 +90,20 @@ docker run --rm -v "$PWD":/repo -w /repo/firmware espressif/idf:v5.5.1 idf.py bu
 ## Test
 
 The end-to-end tests ([bleproxyd/tests/e2e](bleproxyd/tests/e2e/README.md)) run the daemon against a simulated ESP and check it with Home Assistant's own ESPHome client library.
+
+## Pre-commit hooks
+
+[.pre-commit-config.yaml](.pre-commit-config.yaml) runs on every commit once installed:
+
+```sh
+pre-commit install --hook-type pre-commit --hook-type pre-push
+pre-commit run --all-files            # check the whole tree
+```
+
+- Auto-fixes (re-stage and commit again): trailing whitespace, missing final newlines, CRLF line endings, Python import order and formatting (ruff, settings in [ruff.toml](ruff.toml)).
+- Checks: YAML/TOML/JSON syntax, merge conflict markers, large files and firmware images (`.bin`, `.uf2`, `.elf`), private keys, executable bits, shellcheck, ruff lint, codespell.
+- When C sources or the Makefile change: `make test` and the `mipsle`, `arm64` and `armv7` cross builds.
+- Before push only: `make e2e`, which is slower and builds a venv on first run.
 
 ## Install
 

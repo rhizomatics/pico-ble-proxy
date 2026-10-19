@@ -1,0 +1,6 @@
+# Pinned here so results don't depend on ruff's defaults or a user-level config.
+line-length = 120
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # ruff format owns line length

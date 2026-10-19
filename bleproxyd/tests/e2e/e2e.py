@@ -144,6 +144,15 @@ class FakeESP:
 
     def unplug(self):
         if self.conn:
+            # shutdown() (not just close()) so the _read thread's blocking
+            # recv() unblocks right away: on Linux, close() from another
+            # thread doesn't interrupt a concurrent blocking call on the
+            # same fd, so the socket wouldn't actually tear down (and send
+            # its FIN) until the whole process exited.
+            try:
+                self.conn.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
             self.conn.close()
 
 

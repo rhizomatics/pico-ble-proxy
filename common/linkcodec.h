@@ -5,18 +5,18 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define LINK_HELLO 0x01
-#define LINK_ADV 0x02
+#define LINK_HELLO  0x01
+#define LINK_ADV    0x02
 #define LINK_STATUS 0x03
-#define LINK_LOG 0x04
+#define LINK_LOG    0x04
 
 #define LINK_CMD_HELLO_REQ 0x81
-#define LINK_CMD_REBOOT 0x82
+#define LINK_CMD_REBOOT    0x82
 
 #define LINK_MAX_PAYLOAD 128
-#define LINK_RAW_MAX (LINK_MAX_PAYLOAD + 3)  // type + payload + crc16
+#define LINK_RAW_MAX     (LINK_MAX_PAYLOAD + 3)  // type + payload + crc16
 // Leading delimiter + COBS overhead + trailing delimiter.
-#define LINK_ENC_MAX (LINK_RAW_MAX + LINK_RAW_MAX / 254 + 1 + 2)
+#define LINK_ENC_MAX     (LINK_RAW_MAX + LINK_RAW_MAX / 254 + 1 + 2)
 
 // CRC-16/CCITT-FALSE.
 uint16_t link_crc16(const uint8_t *p, size_t n);

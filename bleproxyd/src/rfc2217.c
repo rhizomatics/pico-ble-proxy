@@ -32,7 +32,13 @@ enum {
     CTL_RTS_OFF = 12,
 };
 
-enum parse_state { ST_DATA, ST_IAC, ST_OPT, ST_SB, ST_SB_IAC };
+enum parse_state {
+    ST_DATA,
+    ST_IAC,
+    ST_OPT,
+    ST_SB,
+    ST_SB_IAC
+};
 
 struct session {
     int cfd, sfd;
@@ -115,16 +121,16 @@ static void subnegotiate(struct session *s) {
     } else if (cmd == SET_CONTROL && vlen == 1) {
         flush_serial(s);  // control changes must happen after preceding data
         switch (val[0]) {
-        case CTL_DTR_ON:
-        case CTL_DTR_OFF:
-            s->dtr = val[0] == CTL_DTR_ON;
-            serial_set_lines(s->sfd, s->dtr, -1);
-            break;
-        case CTL_RTS_ON:
-        case CTL_RTS_OFF:
-            s->rts = val[0] == CTL_RTS_ON;
-            serial_set_lines(s->sfd, -1, s->rts);
-            break;
+            case CTL_DTR_ON:
+            case CTL_DTR_OFF:
+                s->dtr = val[0] == CTL_DTR_ON;
+                serial_set_lines(s->sfd, s->dtr, -1);
+                break;
+            case CTL_RTS_ON:
+            case CTL_RTS_OFF:
+                s->rts = val[0] == CTL_RTS_ON;
+                serial_set_lines(s->sfd, -1, s->rts);
+                break;
         }
     }
     // Data size, parity, stop bits, purge, masks: acknowledge as requested.
@@ -149,55 +155,55 @@ static void from_client(struct session *s, const uint8_t *b, size_t n) {
     for (size_t i = 0; i < n; i++) {
         uint8_t c = b[i];
         switch (s->st) {
-        case ST_DATA:
-            if (c == IAC) {
-                s->st = ST_IAC;
-            } else {
-                s->ser_out[s->ser_len++] = c;
-                if (s->ser_len == sizeof(s->ser_out)) {
-                    flush_serial(s);
+            case ST_DATA:
+                if (c == IAC) {
+                    s->st = ST_IAC;
+                } else {
+                    s->ser_out[s->ser_len++] = c;
+                    if (s->ser_len == sizeof(s->ser_out)) {
+                        flush_serial(s);
+                    }
                 }
-            }
-            break;
-        case ST_IAC:
-            if (c == IAC) {
-                s->ser_out[s->ser_len++] = IAC;
-                if (s->ser_len == sizeof(s->ser_out)) {
-                    flush_serial(s);
+                break;
+            case ST_IAC:
+                if (c == IAC) {
+                    s->ser_out[s->ser_len++] = IAC;
+                    if (s->ser_len == sizeof(s->ser_out)) {
+                        flush_serial(s);
+                    }
+                    s->st = ST_DATA;
+                } else if (c == WILL || c == WONT || c == DO || c == DONT) {
+                    s->opt_cmd = c;
+                    s->st = ST_OPT;
+                } else if (c == SB) {
+                    s->sb_len = 0;
+                    s->st = ST_SB;
+                } else {
+                    s->st = ST_DATA;  // NOP, GA etc.
                 }
+                break;
+            case ST_OPT:
+                negotiate(s, s->opt_cmd, c);
                 s->st = ST_DATA;
-            } else if (c == WILL || c == WONT || c == DO || c == DONT) {
-                s->opt_cmd = c;
-                s->st = ST_OPT;
-            } else if (c == SB) {
-                s->sb_len = 0;
-                s->st = ST_SB;
-            } else {
-                s->st = ST_DATA;  // NOP, GA etc.
-            }
-            break;
-        case ST_OPT:
-            negotiate(s, s->opt_cmd, c);
-            s->st = ST_DATA;
-            break;
-        case ST_SB:
-            if (c == IAC) {
-                s->st = ST_SB_IAC;
-            } else if (s->sb_len < sizeof(s->sb)) {
-                s->sb[s->sb_len++] = c;
-            }
-            break;
-        case ST_SB_IAC:
-            if (c == SE) {
-                subnegotiate(s);
-                s->st = ST_DATA;
-            } else {
-                if (s->sb_len < sizeof(s->sb)) {
-                    s->sb[s->sb_len++] = c;  // IAC IAC inside SB
+                break;
+            case ST_SB:
+                if (c == IAC) {
+                    s->st = ST_SB_IAC;
+                } else if (s->sb_len < sizeof(s->sb)) {
+                    s->sb[s->sb_len++] = c;
                 }
-                s->st = ST_SB;
-            }
-            break;
+                break;
+            case ST_SB_IAC:
+                if (c == SE) {
+                    subnegotiate(s);
+                    s->st = ST_DATA;
+                } else {
+                    if (s->sb_len < sizeof(s->sb)) {
+                        s->sb[s->sb_len++] = c;  // IAC IAC inside SB
+                    }
+                    s->st = ST_SB;
+                }
+                break;
         }
     }
     flush_serial(s);

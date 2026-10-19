@@ -22,8 +22,8 @@
 
 static const char *TAG = "bleproxy";
 
-#define XIAO_RF_SWITCH_EN GPIO_NUM_3  // low = RF switch powered
-#define XIAO_RF_ANT_SEL GPIO_NUM_14   // low = ceramic, high = U.FL
+#define XIAO_RF_SWITCH_EN GPIO_NUM_3   // low = RF switch powered
+#define XIAO_RF_ANT_SEL   GPIO_NUM_14  // low = ceramic, high = U.FL
 
 #define MS_TO_SCAN_UNITS(ms) ((ms) * 1000 / 625)
 
@@ -65,14 +65,14 @@ static void send_log(const char *msg) {
 
 static void on_cmd(uint8_t type, const uint8_t *payload, size_t len) {
     switch (type) {
-    case LINK_CMD_HELLO_REQ:
-        send_hello();
-        break;
-    case LINK_CMD_REBOOT:
-        send_log("rebooting on request");
-        vTaskDelay(pdMS_TO_TICKS(100));
-        esp_restart();
-        break;
+        case LINK_CMD_HELLO_REQ:
+            send_hello();
+            break;
+        case LINK_CMD_REBOOT:
+            send_log("rebooting on request");
+            vTaskDelay(pdMS_TO_TICKS(100));
+            esp_restart();
+            break;
     }
 }
 
@@ -102,28 +102,28 @@ static void start_scan(void) {
 
 static int gap_event(struct ble_gap_event *event, void *arg) {
     switch (event->type) {
-    case BLE_GAP_EVENT_DISC: {
-        const struct ble_gap_disc_desc *d = &event->disc;
-        uint8_t p[9 + BLE_HS_ADV_MAX_SZ];
-        for (int i = 0; i < 6; i++) {
-            p[i] = d->addr.val[5 - i];  // NimBLE stores LSB first
+        case BLE_GAP_EVENT_DISC: {
+            const struct ble_gap_disc_desc *d = &event->disc;
+            uint8_t p[9 + BLE_HS_ADV_MAX_SZ];
+            for (int i = 0; i < 6; i++) {
+                p[i] = d->addr.val[5 - i];  // NimBLE stores LSB first
+            }
+            p[6] = d->addr.type;
+            p[7] = (uint8_t)d->rssi;
+            p[8] = d->event_type == BLE_HCI_ADV_RPT_EVTYPE_SCAN_RSP ? 1 : 0;
+            uint8_t n = d->length_data > BLE_HS_ADV_MAX_SZ ? BLE_HS_ADV_MAX_SZ : d->length_data;
+            memcpy(p + 9, d->data, n);
+            adv_seen++;
+            if (!link_send(LINK_ADV, p, 9 + n)) {
+                adv_dropped++;
+            }
+            return 0;
         }
-        p[6] = d->addr.type;
-        p[7] = (uint8_t)d->rssi;
-        p[8] = d->event_type == BLE_HCI_ADV_RPT_EVTYPE_SCAN_RSP ? 1 : 0;
-        uint8_t n = d->length_data > BLE_HS_ADV_MAX_SZ ? BLE_HS_ADV_MAX_SZ : d->length_data;
-        memcpy(p + 9, d->data, n);
-        adv_seen++;
-        if (!link_send(LINK_ADV, p, 9 + n)) {
-            adv_dropped++;
-        }
-        return 0;
-    }
-    case BLE_GAP_EVENT_DISC_COMPLETE:
-        start_scan();
-        return 0;
-    default:
-        return 0;
+        case BLE_GAP_EVENT_DISC_COMPLETE:
+            start_scan();
+            return 0;
+        default:
+            return 0;
     }
 }
 

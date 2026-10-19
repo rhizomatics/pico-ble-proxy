@@ -1,0 +1,11 @@
+backups/
+bleproxyd/build/
+bleproxyd/dist/
+bleproxyd/tests/e2e/.venv/
+firmware/build/
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/managed_components/
+__pycache__/
+.vscode/
+.venv/

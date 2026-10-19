@@ -1,0 +1,31 @@
+# bleproxyd configuration: one setting per line, "#" starts a comment.
+# Check it with: bleproxyd check-config -c /etc/bleproxyd.conf
+
+# ESP32 serial device (glob allowed).
+serial          /dev/ttyACM*
+
+# ESPHome API for Home Assistant. allow_from takes addresses or CIDRs,
+# space separated or on repeated lines.
+listen          192.168.1.1:6053
+allow_from      192.168.0.10
+
+# ESPHome hostname (<= 31 chars) and the name Home Assistant shows.
+name            boat-ble-proxy
+friendly_name   Boat BLE Proxy
+
+# Forwarding policy. Each device is sent at most every min_interval, and
+# re-sent unchanged every keepalive so Home Assistant doesn't mark it stale.
+flush_interval  1s
+min_interval    10s
+keepalive       2m
+
+# Only these devices are forwarded. Find more with `bleproxyd discover`.
+device  00:11:22:33:44:01  Victron solar charger
+device  00:11:22:33:44:02  Saloon RuuviTag
+device  00:11:22:33:44:03  Deck RuuviTag
+device  00:11:22:33:44:04  Fridge SwitchBot
+# forward_all   yes     # forward everything heard (bench testing only)
+
+# RFC 2217 bridge used by tools/flash-remote.sh to reflash the ESP32.
+maintenance_listen      192.168.1.1:4000
+maintenance_allow_from  192.168.0.0/24

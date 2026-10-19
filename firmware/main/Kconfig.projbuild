@@ -1,0 +1,35 @@
+menu "BLE proxy"
+
+config BLEPROXY_XIAO_RF_SWITCH
+    bool "Drive the XIAO ESP32C6 RF switch (GPIO3 enable, GPIO14 select)"
+    default y
+    help
+        The Seeed XIAO ESP32C6 routes the radio through an RF switch that
+        picks the on-board ceramic antenna or the U.FL connector.
+
+config BLEPROXY_EXTERNAL_ANTENNA
+    bool "Use the external U.FL antenna"
+    depends on BLEPROXY_XIAO_RF_SWITCH
+    default y
+
+config BLEPROXY_ACTIVE_SCAN
+    bool "Active scanning (request scan responses)"
+    default y
+    help
+        Some devices (SwitchBot among them) only send part of their data in
+        scan responses.
+
+config BLEPROXY_SCAN_INTERVAL_MS
+    int "Scan interval (ms)"
+    range 3 10240
+    default 100
+
+config BLEPROXY_SCAN_WINDOW_MS
+    int "Scan window (ms)"
+    range 3 10240
+    default 100
+    help
+        Equal to the interval means scanning 100% of the time, which is fine
+        since nothing else shares the radio.
+
+endmenu

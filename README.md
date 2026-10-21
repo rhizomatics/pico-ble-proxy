@@ -37,6 +37,8 @@ The Linux daemon, `bleproxyd`, listens on the USB serial port for BLE traffic fr
 
 For security and tiny footprint, it does scan and report all BLE devices found, it only forwards data from a configured list of MAC addresses (easily discoverable from any Bluetooth scanner, or from SignalK's BLE Manager, Home Assistant etc).
 
+Ideal where a traditional bluetooth adapter isnt feasible, such as where the device doesnt allow packages to be added or doesn't have a 'bluez' pacakage available, or where there's not always WiFi available. 
+
 ## Dependencies
 
 `bleproxyd` is tiny, and has no dependencies on BlueZ, Python or packages on the router. There is no reliance on Wi-Fi, ideal for when the boat or similar is being monitored long term in a minimal power environment.

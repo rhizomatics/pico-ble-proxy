@@ -83,6 +83,9 @@ To find what the host device needs, run `uname -m` on it. If it reports `mips`, 
 
 ### Build
 
+>[!NOTE]
+>The docker container is quite chunky, you'll need 5Gb or so spare on file system for it.
+
 ```sh
 docker run --rm -v "$PWD":/repo -w /repo/firmware espressif/idf:v5.5.1 idf.py build
 ```
@@ -91,7 +94,13 @@ docker run --rm -v "$PWD":/repo -w /repo/firmware espressif/idf:v5.5.1 idf.py bu
 
 The end-to-end tests ([bleproxyd/tests/e2e](bleproxyd/tests/e2e/README.md)) run the daemon against a simulated ESP and check it with Home Assistant's own ESPHome client library.
 
-## Pre-commit hooks
+## Install
+
+- `tools/flash-remote.sh`: reflashes the ESP from home through the host, can be done remotely, e.g. if host+ESP32 are on a boat.
+
+## Development Environment
+
+### Pre-commit hooks
 
 [.pre-commit-config.yaml](.pre-commit-config.yaml) runs on every commit once installed:
 
@@ -105,6 +114,4 @@ pre-commit run --all-files            # check the whole tree
 - When C sources or the Makefile change: `make test` and the `mipsle`, `arm64` and `armv7` cross builds.
 - Before push only: `make e2e`, which is slower and builds a venv on first run.
 
-## Install
 
-- `tools/flash-remote.sh`: reflashes the ESP from home through the host, can be done remotely, e.g. if host+ESP32 are on a boat.

@@ -51,6 +51,14 @@ Ideal where a traditional bluetooth adapter isnt feasible, such as where the dev
 
 Find the instructions at [BUILD.md](./BUILD.md)
 
+## Install on ESP32 Device
+
+Use the `tools/flash-remote.sh` to install. The default account is `root` on host at `192.168.1.1`. Use the `REMOTE` environment variable to change that.
+
+```bash
+REMOTE=admin@192.168.100.10 tools/flash-remote.sh
+```
+
 ## Install on the Host Device
 
 > [!NOTE]

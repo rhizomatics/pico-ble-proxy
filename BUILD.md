@@ -113,5 +113,3 @@ pre-commit run --all-files            # check the whole tree
 - Checks: YAML/TOML/JSON syntax, merge conflict markers, large files and firmware images (`.bin`, `.uf2`, `.elf`), private keys, executable bits, shellcheck, ruff lint, codespell.
 - When C sources or the Makefile change: `make test` and the `mipsle`, `arm64` and `armv7` cross builds.
 - Before push only: `make e2e`, which is slower and builds a venv on first run.
-
-

@@ -7,6 +7,8 @@ The original environment is a Teltonika 95X series 4G router and a $10 [Seeed XI
 > [!NOTE]
 >This project is focused only on passive Bluetooth *Low Energy* usage, so it doesn't do any of the traditional Bluetooth pairing, has no audio support, and doesn't handle active BLE using GATT.
 
+Read more about the motivation for this, and other options tried, on Substack at [Low Power Remotely Monitoring my Boat](https://automatedboat.substack.com/p/frugal-remote-monitoring-for-my-boat?r=6b6vr).
+
 ## How it Works
 
 ```mermaid

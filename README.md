@@ -58,7 +58,7 @@ Find the instructions at [BUILD.md](./BUILD.md)
 Use the `tools/flash-remote.sh` to install. The default account is `root` on host at `192.168.1.1`. Use the `REMOTE` environment variable to change that.
 
 ```bash
-REMOTE=admin@192.168.100.10 tools/flash-remote.sh
+REMOTE=root@192.168.100.10 tools/flash-remote.sh
 ```
 
 ## Install on the Host Device
@@ -69,14 +69,13 @@ REMOTE=admin@192.168.100.10 tools/flash-remote.sh
 
 RutOS 7.x has a read-only root. The writable overlay holds `/usr/local` and `/etc`, with under 1 MB free.
 
-```sh
-scp -O bleproxyd/dist/bleproxyd-linux-mipsle    root@192.168.1.1:/usr/local/bin/bleproxyd
-scp -O bleproxyd/bleproxyd.conf.example         root@192.168.1.1:/etc/bleproxyd.conf
-scp -O bleproxyd/packaging/procd/bleproxyd.init root@192.168.1.1:/etc/init.d/bleproxyd
-ssh root@192.168.1.1 'chmod +x /usr/local/bin/bleproxyd /etc/init.d/bleproxyd &&
-  bleproxyd check-config && /etc/init.d/bleproxyd enable && /etc/init.d/bleproxyd start &&
-  sleep 3 && logread -e bleproxyd | tail'
+Use `tools/install-remote.sh` to install or upgrade. It takes the same `REMOTE` environment variable as `tools/flash-remote.sh`, and `BIN` selects a different build.
+
+```bash
+REMOTE=root@192.168.100.10 tools/install-remote.sh
 ```
+
+On a first install it copies the example config to `/etc/bleproxyd.conf`, which needs editing for your network and devices. An existing config is never overwritten.
 
 An alternative service for `systemd` based hosts is available at `bleproxyd/packaging/systemd`.
 
@@ -87,7 +86,7 @@ An alternative service for `systemd` based hosts is available at `bleproxyd/pack
   - If nothing appears, the cable is probably power-only (often USB-C or USB-A -> USB-C cables are designed for charging purposes and not data. Often the data and power ones are advertised as 'Carplay' compatible)
 - Firewall: allow TCP port 6053 from the host IP, and TCP port 4000 from home for reflashing, on whichever zone the WireGuard traffic arrives in.
   -  `bleproxyd` also enforces `allow_from` itself.
-- Firmware upgrades: check whether the host OS keeps `/usr/local` and `/etc/bleproxyd.conf` across an upgrade with "keep settings". If it doesn't, reinstall afterwards.
+- Firmware upgrades: a RutOS upgrade removes `bleproxyd`, including its config, unless its files are listed in `/etc/sysupgrade.conf`. `tools/install-remote.sh` adds them, and warns if `sysupgrade -l` doesn't list them. Upgrade with "keep settings" on, and keep your own copy of `/etc/bleproxyd.conf`.
 
 ## Add to Home Assistant
 

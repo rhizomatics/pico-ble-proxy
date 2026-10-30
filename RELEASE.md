@@ -1,0 +1,3 @@
+- commit
+- git tag v0.2.0.
+- Rebuild the firmware and run make -C bleproxyd mipsle.

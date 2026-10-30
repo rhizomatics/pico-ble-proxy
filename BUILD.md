@@ -12,7 +12,7 @@
 | Docker | Building the ESP32 firmware with ESP-IDF | **Not via mise**: Docker Desktop, OrbStack, or the distro package |
 | `uv` | Installing `esptool` | mise (`uv`) or the [uv installer](https://docs.astral.sh/uv/), or install packages using `pip` |
 | `esptool` v5+ | Flashing the ESP32 (`tools/flash-remote.sh`) | `uv tool install esptool` |
-| `ssh` | `tools/flash-remote.sh` | System |
+| `ssh`, `scp` | `tools/flash-remote.sh`, `tools/install-remote.sh` | System |
 | `pre-commit` | Git hooks (see [Pre-commit hooks](#pre-commit-hooks)) | mise (in [mise.toml](mise.toml)) |
 
 > [!TIP]
@@ -97,6 +97,7 @@ The end-to-end tests ([bleproxyd/tests/e2e](bleproxyd/tests/e2e/README.md)) run 
 ## Install
 
 - `tools/flash-remote.sh`: reflashes the ESP from home through the host, can be done remotely, e.g. if host+ESP32 are on a boat.
+- `tools/install-remote.sh`: installs or upgrades `bleproxyd` on an OpenWrt/RutOS host, keeping any existing config.
 
 ## Development Environment
 

@@ -3,6 +3,7 @@
 minimum_release_age = "7d"
 
 [tools]
+"pipx:codespell" = "latest"
 prek = "latest"
 python = "latest"
 uv = { version = "latest", minimum_release_age = "2d" }

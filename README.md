@@ -1,5 +1,7 @@
 # pico-ble-proxy
 
+[![boat tech directory](https://boat-tech-directory.rhizomatics.org.uk/images/badge.svg)](https://boat-tech-directory.rhizomatics.org.uk) [![managed by hq](https://raw.githubusercontent.com/rhizomatics/hq/main/assets/badge-managed-by-hq.svg)](https://github.com/rhizomatics/hq)
+
 A minimal Bluetooth Low Energy (BLE) proxy intended to run on a combination of an ESP32 USB stick and a tiny device like a router and act as an extension of Home Assistant's BLE support.
 
 The original environment is a Teltonika 95X series 4G router and a $10 [Seeed XIAO ESP32-C6](https://www.seeedstudio.com/Seeed-Studio-XIAO-ESP32C6-p-5884.html) with an external 2.4 GHz antenna on a boat, with Wireguard VPN extending the home network to the boat. Typical BLE devices are Victron boxes, and thermometers such as RuuviTag and Switchbot.

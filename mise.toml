@@ -1,5 +1,9 @@
+[settings]
+# Cooldown for tool upgrades (policies/project_standards.md in rhizomatics/hq)
+minimum_release_age = "7d"
+
 [tools]
-pre-commit = "latest"
+prek = "latest"
 python = "latest"
-uv = "latest"
+uv = { version = "latest", minimum_release_age = "2d" }
 zig = "latest"

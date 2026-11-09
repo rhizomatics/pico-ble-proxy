@@ -13,7 +13,7 @@
 | `uv` | Installing `esptool` | mise (`uv`) or the [uv installer](https://docs.astral.sh/uv/), or install packages using `pip` |
 | `esptool` v5+ | Flashing the ESP32 (`tools/flash-remote.sh`) | `uv tool install esptool` |
 | `ssh`, `scp` | `tools/flash-remote.sh`, `tools/install-remote.sh` | System |
-| `pre-commit` | Git hooks (see [Pre-commit hooks](#pre-commit-hooks)) | mise (in [mise.toml](mise.toml)) |
+| `prek` | Git hooks (see [Pre-commit hooks](#pre-commit-hooks)) | mise (in [mise.toml](mise.toml)) |
 
 > [!TIP]
 > `mise` is the easiest way to install `zig`, Python and `uv`. Run `mise install` to follow the config [mise.toml](mise.toml) pins. Add the others with `mise use python uv` if you want them, then install `esptool` with `uv tool install esptool`.
@@ -106,8 +106,8 @@ The end-to-end tests ([bleproxyd/tests/e2e](bleproxyd/tests/e2e/README.md)) run 
 [.pre-commit-config.yaml](.pre-commit-config.yaml) runs on every commit once installed:
 
 ```sh
-pre-commit install --hook-type pre-commit --hook-type pre-push
-pre-commit run --all-files            # check the whole tree
+prek install --hook-type pre-commit --hook-type pre-push
+prek run --all-files            # check the whole tree
 ```
 
 - Auto-fixes (re-stage and commit again): trailing whitespace, missing final newlines, CRLF line endings, Python import order and formatting (ruff, settings in [ruff.toml](ruff.toml)), C formatting (clang-format, settings in [.clang-format](.clang-format)).

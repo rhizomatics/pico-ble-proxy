@@ -1,13 +1,11 @@
 #!/bin/sh
 # Runs the e2e tests against build/bleproxyd. Uses $PYTHON if set, otherwise
-# creates a virtualenv in tests/e2e/.venv with the pinned requirements.
+# `uv run` with the pinned requirements, in an environment uv caches and rebuilds
+# when the requirements or Python change.
 set -eu
 here=$(cd "$(dirname "$0")" && pwd)
 if [ -z "${PYTHON:-}" ]; then
-	if [ ! -x "$here/.venv/bin/python" ]; then
-		python3 -m venv "$here/.venv"
-		"$here/.venv/bin/pip" install -q -r "$here/requirements.txt"
-	fi
-	PYTHON="$here/.venv/bin/python"
+	exec uv run --no-project --with-requirements "$here/requirements.txt" \
+		python -I "$here/e2e.py" "$here/../../build/bleproxyd" "$@"
 fi
 exec "$PYTHON" -I "$here/e2e.py" "$here/../../build/bleproxyd" "$@"

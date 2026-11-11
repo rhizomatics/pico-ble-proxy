@@ -8,15 +8,14 @@
 | C compiler (`cc`, clang or gcc) with ASan/UBSan | `native`, `test`, `e2e` | System (as `make`) |
 | `zig` | Cross-compiling (`mipsle`, `arm64`, `armv7`) | mise (in [mise.toml](mise.toml)) |
 | `git` | Version string in the binary (falls back to `dev`) | System |
-| Python 3 with `venv` | `e2e` (`aioesphomeapi`, `pyserial` are installed into `tests/e2e/.venv` automatically) | mise (`python`) or system |
+| Python 3, `uv` | `e2e`: `uv run` supplies `aioesphomeapi` and `pyserial` from `tests/e2e/requirements.txt` | mise (in [mise.toml](mise.toml)) |
 | Docker | Building the ESP32 firmware with ESP-IDF | **Not via mise**: Docker Desktop, OrbStack, or the distro package |
-| `uv` | Installing `esptool` | mise (`uv`) or the [uv installer](https://docs.astral.sh/uv/), or install packages using `pip` |
-| `esptool` v5+ | Flashing the ESP32 (`tools/flash-remote.sh`) | `uv tool install esptool` |
+| `esptool` v5+ | Flashing the ESP32 (`tools/flash-remote.sh`) | mise (in [mise.toml](mise.toml)) |
 | `ssh`, `scp` | `tools/flash-remote.sh`, `tools/install-remote.sh` | System |
-| `prek` | Git hooks (see [Pre-commit hooks](#pre-commit-hooks)) | mise (in [mise.toml](mise.toml)) |
+| `prek`, `shellcheck`, `codespell` | Git hooks (see [Pre-commit hooks](#pre-commit-hooks)) | mise (in [mise.toml](mise.toml)) |
 
 > [!TIP]
-> `mise` is the easiest way to install `zig`, Python and `uv`. Run `mise install` to follow the config [mise.toml](mise.toml) pins. Add the others with `mise use python uv` if you want them, then install `esptool` with `uv tool install esptool`.
+> All the tools that can come from mise or uv do. Run `mise install` once to install everything in [mise.toml](mise.toml), and run commands inside the project directory with mise activated, or with `mise exec --`. Python packages come through `uv` (directly, or through mise's `pipx:` backend), never `pip` or a system Python.
 >Docker, `ssh` and `git` can't be installed with mise. `make` and `clang` are only available through mise's experimental conda backend, so use the system versions.
 
 ### Getting `make` and a C compiler
@@ -113,4 +112,4 @@ prek run --all-files            # check the whole tree
 - Auto-fixes (re-stage and commit again): trailing whitespace, missing final newlines, CRLF line endings, Python import order and formatting (ruff, settings in [ruff.toml](ruff.toml)), C formatting (clang-format, settings in [.clang-format](.clang-format)).
 - Checks: YAML/TOML/JSON syntax, merge conflict markers, large files and firmware images (`.bin`, `.uf2`, `.elf`), private keys, executable bits, shellcheck, ruff lint, codespell.
 - When C sources or the Makefile change: `make test` and the `mipsle`, `arm64` and `armv7` cross builds.
-- Before push only: `make e2e`, which is slower and builds a venv on first run.
+- Before push only: `make e2e`, which is slower, and `uv` sets up its packages on first run.

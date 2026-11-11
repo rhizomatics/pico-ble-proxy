@@ -1,5 +1,6 @@
-# Run `pre-commit install` once, then hooks run on every commit.
-# `pre-commit run --all-files` checks the whole tree.
+# Run `prek install --hook-type pre-commit --hook-type pre-push` once, then hooks
+# run on every commit. `prek run --all-files` checks the whole tree.
+# Tools come from mise.toml, so run git with mise activated.
 exclude: ^(backups|firmware/build|firmware/managed_components|bleproxyd/(build|dist))/
 
 repos:
@@ -73,7 +74,7 @@ repos:
         entry: make -C bleproxyd mipsle arm64 armv7
         files: ^(bleproxyd/src/.*\.[ch]|common/.*\.[ch]|bleproxyd/Makefile)$
         pass_filenames: false
-      # Slower: builds a venv on first run, so only before pushing.
+      # Slower, so only before pushing.
       - id: e2e-tests
         name: bleproxyd end-to-end tests
         language: system

@@ -4,6 +4,7 @@ minimum_release_age = "7d"
 
 [tools]
 "pipx:codespell" = "latest"
+"pipx:esptool" = "latest"
 prek = "latest"
 python = "latest"
 shellcheck = "latest"

@@ -10,7 +10,7 @@ TCP) and checks it with the clients that matter:
   a binary round-trip through `flash-bridge`.
 
 ```sh
-make -C bleproxyd e2e                 # creates tests/e2e/.venv on first run
+make -C bleproxyd e2e                 # uv run, with requirements.txt
 tests/e2e/run.sh --long               # adds a 3-minute keepalive test
 PYTHON=/path/to/python tests/e2e/run.sh
 ```

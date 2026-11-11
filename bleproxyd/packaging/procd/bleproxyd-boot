@@ -1,0 +1,20 @@
+#!/bin/sh
+# Run from /etc/rc.local at every boot. A RutOS firmware upgrade can keep
+# /usr/local/bin/bleproxyd but drop the /etc/rc.d links or the init script, so
+# the service never starts. This puts both back and starts the service.
+# Re-enabling and starting an already running procd service is harmless.
+
+[ -x /usr/local/bin/bleproxyd ] || exit 0
+
+if [ ! -x /etc/init.d/bleproxyd ] && [ -s /usr/local/share/bleproxyd/bleproxyd.init ]; then
+	cp /usr/local/share/bleproxyd/bleproxyd.init /etc/init.d/bleproxyd &&
+		chmod +x /etc/init.d/bleproxyd &&
+		logger -t bleproxyd-boot "restored /etc/init.d/bleproxyd"
+fi
+
+[ -x /etc/init.d/bleproxyd ] || exit 0
+/etc/init.d/bleproxyd enabled || {
+	/etc/init.d/bleproxyd enable
+	logger -t bleproxyd-boot "re-enabled bleproxyd"
+}
+/etc/init.d/bleproxyd start

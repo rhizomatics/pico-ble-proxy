@@ -23,12 +23,15 @@ repos:
       - id: detect-private-key
       - id: forbid-new-submodules
 
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.11.0.1-1
+  # shellcheck comes from mise.toml. shellcheck-py's install kept cutting off its download.
+  - repo: local
     hooks:
       - id: shellcheck
+        name: shellcheck
+        language: system
+        entry: shellcheck
         # procd init scripts run under /etc/rc.common, which shellcheck can't follow.
-        files: (\.sh|\.init)$
+        files: (\.sh|\.init|/bleproxyd-boot)$
         args: [--shell=sh, --exclude=SC2034]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit

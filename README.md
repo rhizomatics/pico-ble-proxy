@@ -79,6 +79,21 @@ REMOTE=root@192.168.100.10 tools/install-remote.sh
 
 On a first install it copies the example config to `/etc/bleproxyd.conf`, which needs editing for your network and devices. An existing config is never overwritten.
 
+The script enables the service, so it starts at boot, and starts it. After editing the config, check it and restart the service on the host:
+
+```sh
+bleproxyd check-config -c /etc/bleproxyd.conf && /etc/init.d/bleproxyd restart
+logread -e bleproxyd | tail
+```
+
+To control the service by hand:
+
+```sh
+/etc/init.d/bleproxyd start       # also stop, restart, status
+/etc/init.d/bleproxyd enable      # start at boot (disable to stop that)
+/etc/init.d/bleproxyd enabled && echo enabled
+```
+
 An alternative service for `systemd` based hosts is available at `bleproxyd/packaging/systemd`.
 
 ### Notes
@@ -89,6 +104,7 @@ An alternative service for `systemd` based hosts is available at `bleproxyd/pack
 - Firewall: allow TCP port 6053 from the host IP, and TCP port 4000 from home for reflashing, on whichever zone the WireGuard traffic arrives in.
   -  `bleproxyd` also enforces `allow_from` itself.
 - Firmware upgrades: a RutOS upgrade removes `bleproxyd`, including its config, unless its files are listed in `/etc/sysupgrade.conf`. `tools/install-remote.sh` adds them, and warns if `sysupgrade -l` doesn't list them. Upgrade with "keep settings" on, and keep your own copy of `/etc/bleproxyd.conf`.
+  - Even with "keep settings", the upgrade drops the `/etc/rc.d` links that start the service at boot. `tools/install-remote.sh` adds a line to `/etc/rc.local` that runs `/usr/local/bin/bleproxyd-boot`, which re-enables and starts the service. If an older install has stopped after an upgrade, run `/etc/init.d/bleproxyd enable && /etc/init.d/bleproxyd start`, or re-run the install script.
 
 ## Add to Home Assistant
 

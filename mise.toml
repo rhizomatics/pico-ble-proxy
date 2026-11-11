@@ -6,5 +6,6 @@ minimum_release_age = "7d"
 "pipx:codespell" = "latest"
 prek = "latest"
 python = "latest"
+shellcheck = "latest"
 uv = { version = "latest", minimum_release_age = "2d" }
 zig = "latest"

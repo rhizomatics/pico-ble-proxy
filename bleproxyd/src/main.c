@@ -459,6 +459,12 @@ int main(int argc, char **argv) {
         } else if (!strcmp(argv[argi], "-t") && argi + 1 < argc) {
             secs = atoi(argv[++argi]);
         } else {
+            if (!strcmp(argv[argi], "-c") || !strcmp(argv[argi], "-t")) {
+                fprintf(stderr, "bleproxyd: %s needs a value%s\n\n", argv[argi],
+                        argv[argi][1] == 'c' ? "; leave out -c to use /etc/bleproxyd.conf" : "");
+            } else {
+                fprintf(stderr, "bleproxyd: unknown option \"%s\"\n\n", argv[argi]);
+            }
             usage();
             return 2;
         }
@@ -490,6 +496,7 @@ int main(int argc, char **argv) {
     } else if (!strcmp(cmd, "reboot-esp")) {
         return cmd_reboot_esp(&cfg);
     }
+    fprintf(stderr, "bleproxyd: unknown command \"%s\"\n\n", cmd);
     usage();
     return 2;
 }

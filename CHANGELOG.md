@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.1 - 2026-11-11
+
+### Fixed
+
+- `bleproxyd` now starts again after a RutOS firmware upgrade. The upgrade (seen on RUT9M 07.24.8) kept the binary, config and init script, but dropped the `/etc/rc.d` links, so the service was installed but disabled. `tools/install-remote.sh` now installs `/usr/local/bin/bleproxyd-boot` and runs it from `/etc/rc.local`. At each boot it re-enables and starts the service, and restores the init script from `/usr/local/share/bleproxyd/` if that was lost too. The `/etc/rc.d` entries, which were never kept, are no longer added to `/etc/sysupgrade.conf`.
+
+### Changed
+
+- `bleproxyd` names the problem before printing its usage: an option with no value, such as `-c` with no file, an unknown option, or an unknown command. Previously it printed only the usage.
+
+- `tools/install-remote.sh` starts by printing the host it will connect to. It also says whether that host came from the `REMOTE` environment variable or is the default.
+
 ## 0.2.0 - 2026-10-30
 
 ### Added

@@ -1,6 +1,6 @@
 # pico-ble-proxy
 
-[![boat tech directory](https://boat-tech-directory.rhizomatics.org.uk/images/badge.svg)](https://boat-tech-directory.rhizomatics.org.uk) [![managed by hq](https://raw.githubusercontent.com/rhizomatics/hq/main/assets/badge-managed-by-hq.svg)](https://github.com/rhizomatics/hq)
+[![boat tech directory](https://boat-tech-directory.rhizomatics.org.uk/images/badge.svg)](https://boat-tech-directory.rhizomatics.org.uk) [![managed by hq](https://raw.githubusercontent.com/rhizomatics/hq/main/assets/badge-managed-by-hq.svg)](https://hq.rhizomatics.org.uk/)
 
 A minimal Bluetooth Low Energy (BLE) proxy intended to run on a combination of an ESP32 USB stick and a tiny device like a router and act as an extension of Home Assistant's BLE support.
 

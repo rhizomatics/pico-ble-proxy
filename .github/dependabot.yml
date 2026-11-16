@@ -1,0 +1,34 @@
+# Dependency updates, in the shape shared across rhizomatics repos (hq policies/project_standards.md, "Dependabot").
+# Version updates run on the 1st and 15th; security updates are raised as soon as an alert opens.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: cron
+      cronjob: "0 6 1,15 * *"
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+        update-types: [minor, patch]
+      actions-security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  # Python used only by the end-to-end tests
+  - package-ecosystem: pip
+    directory: /bleproxyd/tests/e2e
+    schedule:
+      interval: cron
+      cronjob: "0 6 1,15 * *"
+    cooldown:
+      default-days: 7
+    groups:
+      pip:
+        patterns: ["*"]
+        update-types: [minor, patch]
+      pip-security:
+        applies-to: security-updates
+        patterns: ["*"]
